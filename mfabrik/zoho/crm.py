@@ -117,33 +117,30 @@ class CRM(Connection):
     
     def get_records(self, selectColumns='leads(First Name,Last Name,Company)', parameters={}):
         """ 
-        
+
         http://zohocrmapi.wiki.zoho.com/getRecords-Method.html
-        
+
         @param selectColumns: String. What columns to query. For example query format,
             see API doc. Default is leads(First Name,Last Name,Company).
-        
+
         @param parameters: Dictionary of filtering parameters which are part of HTTP POST to Zoho.
             For example parameters see Zoho CRM API docs.
-        
+
         @return: Python list of dictionarizied leads. Each dictionary contains lead key-value pairs. LEADID column is always included.
-        
+
         """
         self.ensure_opened()
-        
-        
+
         post_params = {
             "selectColumns" : selectColumns,
             "newFormat" : 2
         }
-        
+
         post_params.update(parameters)
-        
+
         response = self.do_call("https://crm.zoho.com/crm/private/json/Leads/getRecords", post_params)
-        
-        # raw data looks like {'response': {'result': {'Leads': {'row': [{'FL': [{'content': '177376000000142085', 'val': 'LEADID'}, ...
         data =  decode_json(response)
-        
+
         return self._parse_json_response(data)
     
     def delete_record(self, id, parameters={}):
