@@ -25,13 +25,13 @@ from core import Connection, ZohoException, decode_json
 class CRM(Connection):
     """ CRM specific Zoho APIs mapped to Python """
     
-    def _parse_json_response(self, data):
+    def _parse_json_response(self, data, module="Leads"):
         if data["response"].get("nodata"):
             return []
         
         # Sanify output data to more Python-like format
         output = []
-        rows = data["response"]["result"]["Leads"]["row"]
+        rows = data["response"]["result"][module]["row"]
         # If single item returned
         if type(rows) == dict:
             rows = [rows]
