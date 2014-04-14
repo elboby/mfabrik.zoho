@@ -186,12 +186,14 @@ class CRM(Connection):
         
         self.check_successful_xml(response)
     
-    def get_record_by_id(self, id):
+    def get_record_by_id(self, id, module="Leads"):
         """
         
         https://www.zoho.com/crm/help/api/getrecordbyid.html
         
-        @param id: String. Lead id to fetch.
+        @param id: String. Id to fetch.
+
+        @param module: String. Type of module (default is Leads)
         
         @return: Python dictionary which contains lead key-value pairs.
         
