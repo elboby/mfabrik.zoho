@@ -206,15 +206,71 @@ class CRM(Connection):
             "newFormat" : 2
         }
         
-        response = self.do_call("https://crm.zoho.com/crm/private/json/Leads/getRecordById", post_params)
+        response = self.do_call("https://crm.zoho.com/crm/private/json/"+module+"/getRecordById", post_params)
         
         # raw data looks like {'response': {'result': {'Leads': {'row': [{'FL': [{'content': '177376000000142085', 'val': 'LEADID'}, ...
         data =  decode_json(response)
         
-        parsed = self._parse_json_response(data)
+        parsed = self._parse_json_response(data, module)
         
         return parsed[0] if len(parsed) else None
-    
+
+    def get_related_records(self, parent_id, module="Leads", parent_module="Campaigns"):
+        """
+
+        Get all the "Leads" related to the "Campaigns" identified by "parent_id"
+
+        https://crm.zoho.com/crm/private/json/Leads/getRelatedRecords?newFormat=1&authtoken=sbdjEDBDJ1323&scope=crmapi&parentModule=Campaigns&id=121212121
+
+        """
+        self.ensure_opened()
+
+        post_params = {
+            "id": parent_id,
+            "newFormat" : 2,
+            "parentModule": parent_module
+        }
+
+        response = self.do_call("https://crm.zoho.com/crm/private/json/"+module+"/getRelatedRecords", post_params)
+        data =  decode_json(response)
+
+        return self._parse_json_response(data, module)
+
+    def relate_record(self, module, id, parent_module, parent_id, parent_id_key):
+        """
+
+        Update record (module, id) so it relates to parent_module (parent_id).
+        https://www.zoho.com/crm/help/api/updaterelatedrecords.html
+
+        @param module: String. Type of module (for example "Leads").
+
+        @param id: String. Zoho CRM id for the module (Lead ID).
+
+        @param parent_module: String. Type of the parent module (for example "Campaigns").
+
+        @param parent_id: String. Zoho CRM id for the parent id (Campaign ID).
+
+        @param parent_id_key: String. Name of the attribute for the identifier of the parent module (for example "CAMPAIGNID").
+
+        @return: List of record ids which were updated
+        """
+        self.ensure_opened()
+
+        data = {}
+        data[parent_id_key] = parent_id
+        data["member_status"] = "Sent"
+
+        xmldata = self._prepare_xml_request(parent_module, [data])
+
+        post = {
+            'id': id,
+            'relatedModule': parent_module
+        }
+
+        response = self.do_xml_call("https://crm.zoho.com/crm/private/xml/" + module + "/updateRelatedRecords", post, xmldata)
+
+        self.check_successful_xml(response)
+
     def search_records(self, searchCondition, selectColumns='leads(First Name,Last Name,Company)'):
         """
         
