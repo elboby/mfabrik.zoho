@@ -272,16 +272,20 @@ class CRM(Connection):
 
         self.check_successful_xml(response)
 
-    def search_records(self, searchCondition, selectColumns='leads(First Name,Last Name,Company)'):
+    def search_records(self, module, searchCondition, selectColumns='leads(First Name,Last Name,Company)', parameters={}):
         """
         
         https://www.zoho.com/crm/help/api/getsearchrecords.html
         
+        @param module: String. type of the module (Leads, Potentials, Accounts..).
+
         @param searchCondition: String. Search condition (see ZOHO API doc for details).
         
         @param selectColumns: String. What columns to query. For example query format,
             see API doc. Default is leads(First Name,Last Name,Company).
         
+        @param parameters: dictionary. extra parameters like for pagination.
+
         @return: Python list of dictionarizied leads. Each dictionary contains lead key-value pairs. LEADID column is always included.
         
         """
@@ -293,13 +297,14 @@ class CRM(Connection):
             "searchCondition": searchCondition,
             "newFormat" : 2
         }
+        post_params.update(parameters)
         
-        response = self.do_call("https://crm.zoho.com/crm/private/json/Leads/getSearchRecords", post_params)
+        response = self.do_call("https://crm.zoho.com/crm/private/json/"+module+"/getSearchRecords", post_params)
         
         # raw data looks like {'response': {'result': {'Leads': {'row': [{'FL': [{'content': '177376000000142085', 'val': 'LEADID'}, ...
         data =  decode_json(response)
         
-        return self._parse_json_response(data)
+        return self._parse_json_response(data, module)
     
     def search_records_pdc(self, searchColumn, searchValue, selectColumns='leads(First Name,Last Name,Company)'):
         """
