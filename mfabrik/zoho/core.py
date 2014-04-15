@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 
     Zoho API core functions.
@@ -236,7 +237,7 @@ class Connection(object):
             
         # Check error response
         # <response uri="/crm/private/xml/Leads/insertRecords"><error><code>4401</code><message>Unable to populate data, please check if mandatory value is entered correctly.</message></error></response>
-        
+
         for error in root.findall("error"):
             parameters = self.parameters
             parameters_encoded = self.parameters_encoded

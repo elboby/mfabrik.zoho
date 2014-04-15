@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 
     Zoho CRM API bridge.
