@@ -229,11 +229,14 @@ class Connection(object):
 
         # Example response
         # <response uri="/crm/private/xml/Leads/insertRecords"><result><message>Record(s) added successfully</message><recorddetail><FL val="Id">177376000000142007</FL><FL val="Created Time">2010-06-27 21:37:20</FL><FL val="Modified Time">2010-06-27 21:37:20</FL><FL val="Created By">Ohtamaa</FL><FL val="Modified By">Ohtamaa</FL></recorddetail></result></response>
+        # or
+        # <response uri="/crm/private/xml/Leads/insertRecords"><result><message>Record(s) already exists</message><recorddetail><FL val="Id">614730000002858001</FL><FL val="Created Time">2014-04-14 18:34:24</FL><FL val="Modified Time">2014-04-14 18:34:24</FL><FL val="Created By"><![CDATA[Seilles]]></FL><FL val="Modified By"><![CDATA[Seilles]]></FL></recorddetail></result></response>
 
         root = fromstring(response)
             
         # Check error response
         # <response uri="/crm/private/xml/Leads/insertRecords"><error><code>4401</code><message>Unable to populate data, please check if mandatory value is entered correctly.</message></error></response>
+        
         for error in root.findall("error"):
             parameters = self.parameters
             parameters_encoded = self.parameters_encoded

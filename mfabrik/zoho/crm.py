@@ -68,7 +68,7 @@ class CRM(Connection):
                                 attach_fl = SubElement(mod_fl, "FL", val=mod_item_key)
                                 attach_fl.text = mod_item_value
                             mod_attach_no += 1
-                elif type(value) != str:
+                elif type(value) not in [str, unicode]:
                     fl.text = str(value)
                 else:
                     fl.text = value
