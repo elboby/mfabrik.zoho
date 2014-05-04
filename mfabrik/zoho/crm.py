@@ -47,7 +47,7 @@ class CRM(Connection):
     
     def _prepare_xml_request(self, module, leads):
         root = Element(module)
-        
+
         # Row counter
         no = 1
         for lead in leads:
@@ -185,6 +185,31 @@ class CRM(Connection):
         
         response = self.do_xml_call("https://crm.zoho.com/crm/private/xml/" + module + "/updateRecords", post, xmldata)
         
+        self.check_successful_xml(response)
+
+    def update_records(self, module, data):
+        """ Update multiple records in Zoho CRM database.
+
+        https://www.zoho.com/crm/help/api/updaterecords.html#Update_with_Version4
+
+        @param data: Dictionary. Dictionary content is directly mapped to
+            <FL> XML parameters as described in Zoho CRM API.
+            Use `Id` for identifier
+
+        @return: List of record ids which were updated
+        """
+        self.ensure_opened()
+
+        xmldata = self._prepare_xml_request(module, data)
+
+        post = {
+            'newFormat':    1,
+            'version':      4,
+            'duplicateCheck':   2,
+        }
+
+        response = self.do_xml_call("https://crm.zoho.com/crm/private/xml/" + module + "/updateRecords", post, xmldata)
+
         self.check_successful_xml(response)
     
     def get_record_by_id(self, id, module="Leads"):
